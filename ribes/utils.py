@@ -1,16 +1,5 @@
-import os
-
 import torch
-
-def check_kaggle():
-    return "KAGGLE_CONTAINER_NAME" in os.environ
-
-
-def test_print(mssg):
-    print(f"Message {mssg}")
-
-def real_print(mssg):
-    print(f"Message REAL {mssg}")
+from tqdm import tqdm
 
 
 def get_default_device():

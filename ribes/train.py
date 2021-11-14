@@ -1,15 +1,16 @@
+import os
 import sys
 
 import torch
 from torchsummary import summary
 
 from ribes.read_data import get_dataloader
-from ribes.utils import to_device, get_default_device, check_kaggle
+from ribes.utils import to_device, get_default_device
 from ribes.nn import ResNet9, fit_OneCycle
 
 
 if __name__ == "__main__":
-    if check_kaggle():
+    if "KAGGLE_CONTAINER_NAME" in os.environ:
         sys.path.insert(0, "../input/ribes-github")
 
     batch_size = 2
@@ -20,7 +21,7 @@ if __name__ == "__main__":
     model = to_device(ResNet9(3, len(train_if.classes)), device)
 
     INPUT_SHAPE = (3, 256, 256)
-    print(summary(model, (INPUT_SHAPE), device=device.type))
+    print(summary(model, INPUT_SHAPE, device=device.type))
 
     history = []
 
