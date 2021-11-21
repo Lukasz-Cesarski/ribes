@@ -1,3 +1,4 @@
+albumentations
 kaggle
 numpy
 pandas
@@ -8,7 +9,9 @@ spacy
 seaborn
 transformers
 fuzzywuzzy
+plotly
 python-Levenshtein
 tqdm
 torchsummary
 torchvision
+ipywidgets

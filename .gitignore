@@ -1,6 +1,7 @@
 # local processing
 tmp/
 input/
+models/
 
 .idea/
 

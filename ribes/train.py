@@ -4,15 +4,15 @@ import sys
 import torch
 from torchsummary import summary
 
+if "KAGGLE_CONTAINER_NAME" in os.environ:
+    sys.path.insert(0, "../input/ribes-github")
+
 from ribes.read_data import get_dataloader
 from ribes.utils import to_device, get_default_device
 from ribes.nn import ResNet9, fit_OneCycle
 
 
 if __name__ == "__main__":
-    if "KAGGLE_CONTAINER_NAME" in os.environ:
-        sys.path.insert(0, "../input/ribes-github")
-
     batch_size = 2
     device = get_default_device()
 
