@@ -2,7 +2,6 @@ import os
 import numpy as np
 
 import albumentations as A
-import cv2
 
 import torch
 import torch.nn as nn
@@ -13,31 +12,31 @@ from torch.utils.data import Dataset
 from albumentations.pytorch import ToTensorV2
 
 
-class PlantDataset(Dataset):
-
-    def __init__(self, df, dir_input, transforms=None):
-        self.df = df
-        self.transforms = transforms
-        self.dir_input = dir_input
-
-    def __len__(self):
-        return self.df.shape[0]
-
-    def __getitem__(self, idx):
-        image_src = os.path.join(self.dir_input, 'images', self.df.loc[idx, 'image_id'] + '.jpg')
-        assert os.path.isfile(image_src), image_src
-        # print(image_src)
-        image = cv2.imread(image_src, cv2.IMREAD_COLOR)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        labels = self.df.loc[idx, ['healthy', 'multiple_diseases', 'rust', 'scab']].values
-        labels = torch.from_numpy(labels.astype(np.int8))
-        labels = labels.unsqueeze(-1)
-
-        if self.transforms:
-            transformed = self.transforms(image=image)
-            image = transformed['image']
-
-        return image, labels
+# class PlantDataset(Dataset):
+#
+#     def __init__(self, df, dir_input, transforms=None):
+#         self.df = df
+#         self.transforms = transforms
+#         self.dir_input = dir_input
+#
+#     def __len__(self):
+#         return self.df.shape[0]
+#
+#     def __getitem__(self, idx):
+#         image_src = os.path.join(self.dir_input, 'images', self.df.loc[idx, 'image_id'] + '.jpg')
+#         assert os.path.isfile(image_src), image_src
+#         # print(image_src)
+#         image = cv2.imread(image_src, cv2.IMREAD_COLOR)
+#         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+#         labels = self.df.loc[idx, ['healthy', 'multiple_diseases', 'rust', 'scab']].values
+#         labels = torch.from_numpy(labels.astype(np.int8))
+#         labels = labels.unsqueeze(-1)
+#
+#         if self.transforms:
+#             transformed = self.transforms(image=image)
+#             image = transformed['image']
+#
+#         return image, labels
 
 
 class PlantModel(nn.Module):
@@ -72,21 +71,21 @@ class PlantModel(nn.Module):
         return x
 
 
-class DenseCrossEntropy(nn.Module):
-
-    def __init__(self):
-        super(DenseCrossEntropy, self).__init__()
-
-    def forward(self, logits, labels):
-        logits = logits.float()
-        labels = labels.float()
-
-        logprobs = F.log_softmax(logits, dim=-1)
-
-        loss = -labels * logprobs
-        loss = loss.sum(-1)
-
-        return loss.mean()
+# class DenseCrossEntropy(nn.Module):
+#
+#     def __init__(self):
+#         super(DenseCrossEntropy, self).__init__()
+#
+#     def forward(self, logits, labels):
+#         logits = logits.float()
+#         labels = labels.float()
+#
+#         logprobs = F.log_softmax(logits, dim=-1)
+#
+#         loss = -labels * logprobs
+#         loss = loss.sum(-1)
+#
+#         return loss.mean()
 
 
 # def train_one_fold(i_fold, model, criterion, optimizer, dataloader_train, dataloader_valid, n_epochs, device):
