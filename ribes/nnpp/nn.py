@@ -9,11 +9,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 
-from tqdm import tqdm
 from torch.utils.data import Dataset
 from albumentations.pytorch import ToTensorV2
-
-from sklearn.metrics import roc_auc_score
 
 
 class PlantDataset(Dataset):
@@ -92,75 +89,75 @@ class DenseCrossEntropy(nn.Module):
         return loss.mean()
 
 
-def train_one_fold(i_fold, model, criterion, optimizer, dataloader_train, dataloader_valid, n_epochs, device):
-    train_fold_results = []
-
-    for epoch in range(n_epochs):
-
-        # print('  Epoch {}/{}'.format(epoch + 1, N_EPOCHS))
-        # print('  ' + ('-' * 20))
-        os.system(f'echo \"  Epoch {epoch}\"')
-
-        model.train()
-        tr_loss = 0
-
-        for step, batch in enumerate(tqdm(dataloader_train)):
-            images = batch[0]
-            labels = batch[1]
-
-            images = images.to(device, dtype=torch.float)
-            labels = labels.to(device, dtype=torch.float)
-
-            outputs = model(images)
-            loss = criterion(outputs, labels.squeeze(-1))
-            loss.backward()
-
-            tr_loss += loss.item()
-
-            optimizer.step()
-            optimizer.zero_grad()
-
-        # Validate
-        model.eval()
-        val_loss = 0
-        val_preds = None
-        val_labels = None
-
-        for step, batch in enumerate(dataloader_valid):
-
-            images = batch[0]
-            labels = batch[1]
-
-            if val_labels is None:
-                val_labels = labels.clone().squeeze(-1)
-            else:
-                val_labels = torch.cat((val_labels, labels.squeeze(-1)), dim=0)
-
-            images = images.to(device, dtype=torch.float)
-            labels = labels.to(device, dtype=torch.float)
-
-            with torch.no_grad():
-                outputs = model(images)
-
-                loss = criterion(outputs, labels.squeeze(-1))
-                val_loss += loss.item()
-
-                preds = torch.softmax(outputs, dim=1).data.cpu()
-
-                if val_preds is None:
-                    val_preds = preds
-                else:
-                    val_preds = torch.cat((val_preds, preds), dim=0)
-
-        train_fold_results.append({
-            'fold': i_fold,
-            'epoch': epoch,
-            'train_loss': tr_loss / len(dataloader_train),
-            'valid_loss': val_loss / len(dataloader_valid),
-            'valid_score': roc_auc_score(val_labels, val_preds, average='macro'),
-        })
-
-    return val_preds, train_fold_results
+# def train_one_fold(i_fold, model, criterion, optimizer, dataloader_train, dataloader_valid, n_epochs, device):
+#     train_fold_results = []
+#
+#     for epoch in range(n_epochs):
+#
+#         # print('  Epoch {}/{}'.format(epoch + 1, N_EPOCHS))
+#         # print('  ' + ('-' * 20))
+#         os.system(f'echo \"  Epoch {epoch}\"')
+#
+#         model.train()
+#         tr_loss = 0
+#
+#         for step, batch in enumerate(tqdm(dataloader_train)):
+#             images = batch[0]
+#             labels = batch[1]
+#
+#             images = images.to(device, dtype=torch.float)
+#             labels = labels.to(device, dtype=torch.float)
+#
+#             outputs = model(images)
+#             loss = criterion(outputs, labels.squeeze(-1))
+#             loss.backward()
+#
+#             tr_loss += loss.item()
+#
+#             optimizer.step()
+#             optimizer.zero_grad()
+#
+#         # Validate
+#         model.eval()
+#         val_loss = 0
+#         val_preds = None
+#         val_labels = None
+#
+#         for step, batch in enumerate(dataloader_valid):
+#
+#             images = batch[0]
+#             labels = batch[1]
+#
+#             if val_labels is None:
+#                 val_labels = labels.clone().squeeze(-1)
+#             else:
+#                 val_labels = torch.cat((val_labels, labels.squeeze(-1)), dim=0)
+#
+#             images = images.to(device, dtype=torch.float)
+#             labels = labels.to(device, dtype=torch.float)
+#
+#             with torch.no_grad():
+#                 outputs = model(images)
+#
+#                 loss = criterion(outputs, labels.squeeze(-1))
+#                 val_loss += loss.item()
+#
+#                 preds = torch.softmax(outputs, dim=1).data.cpu()
+#
+#                 if val_preds is None:
+#                     val_preds = preds
+#                 else:
+#                     val_preds = torch.cat((val_preds, preds), dim=0)
+#
+#         train_fold_results.append({
+#             'fold': i_fold,
+#             'epoch': epoch,
+#             'train_loss': tr_loss / len(dataloader_train),
+#             'valid_loss': val_loss / len(dataloader_valid),
+#             'valid_score': roc_auc_score(val_labels, val_preds, average='macro'),
+#         })
+#
+#     return val_preds, train_fold_results
 
 
 SIZE = 512
