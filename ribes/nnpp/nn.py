@@ -189,4 +189,4 @@ transforms_valid = transforms.Compose([
     ])
 
 
-idx2cname = {0: 'healthy', 1: 'mult. diseases', 2: 'rust', 3: 'scab'}
+idx2cname = {0: 'healthy', 1: 'multiple_diseases', 2: 'rust', 3: 'scab'}
