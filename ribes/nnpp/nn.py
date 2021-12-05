@@ -1,16 +1,8 @@
-import os
-import numpy as np
-
-import albumentations as A
-
-import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
 
-from torch.utils.data import Dataset
-from albumentations.pytorch import ToTensorV2
-
+from torchvision import transforms
 
 # class PlantDataset(Dataset):
 #
@@ -44,7 +36,7 @@ class PlantModel(nn.Module):
     def __init__(self, num_classes=4):
         super().__init__()
 
-        self.backbone = torchvision.models.resnet18(pretrained=True)
+        self.backbone = torchvision.models.resnet18(pretrained=False)
 
         in_features = self.backbone.fc.in_features
 
@@ -161,32 +153,40 @@ class PlantModel(nn.Module):
 
 SIZE = 512
 
-transforms_train = A.Compose([
-    A.RandomResizedCrop(height=SIZE, width=SIZE, p=1.0),
-    A.Flip(),
-    A.ShiftScaleRotate(rotate_limit=1.0, p=0.8),
+# transforms_train = A.Compose([
+#     A.RandomResizedCrop(height=SIZE, width=SIZE, p=1.0),
+#     A.Flip(),
+#     A.ShiftScaleRotate(rotate_limit=1.0, p=0.8),
+#
+#     # Pixels
+#     A.OneOf([
+#         A.Emboss(p=1.0),
+#         A.Sharpen(p=1.0),
+#         A.Blur(p=1.0),
+#     ], p=0.5),
+#
+#     # Affine
+#     A.OneOf([
+#         A.ElasticTransform(p=1.0),
+#         A.PiecewiseAffine(p=1.0)
+#     ], p=0.5),
+#
+#     A.Normalize(p=1.0),
+#     ToTensorV2(p=1.0),
+# ])
 
-    # Pixels
-    A.OneOf([
-        A.Emboss(p=1.0),
-        A.Sharpen(p=1.0),
-        A.Blur(p=1.0),
-    ], p=0.5),
+# transforms_valid = A.Compose([
+#     A.Resize(height=SIZE, width=SIZE, p=1.0),
+#     A.Normalize(p=1.0),
+#     ToTensorV2(p=1.0),
+# ])
 
-    # Affine
-    A.OneOf([
-        A.ElasticTransform(p=1.0),
-        A.PiecewiseAffine(p=1.0)
-    ], p=0.5),
+transforms_valid = transforms.Compose([
+        transforms.Resize((SIZE, SIZE)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                             std=[0.229, 0.224, 0.225])
+    ])
 
-    A.Normalize(p=1.0),
-    ToTensorV2(p=1.0),
-])
-
-transforms_valid = A.Compose([
-    A.Resize(height=SIZE, width=SIZE, p=1.0),
-    A.Normalize(p=1.0),
-    ToTensorV2(p=1.0),
-])
 
 idx2cname = {0: 'healthy', 1: 'mult. diseases', 2: 'rust', 3: 'scab'}

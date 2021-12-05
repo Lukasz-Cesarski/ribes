@@ -1,5 +1,4 @@
 -f https://download.pytorch.org/whl/cpu/torch_stable.html
-albumentations
 dash
 gunicorn
 requests

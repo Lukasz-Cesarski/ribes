@@ -26,13 +26,18 @@ def visualize_prediction(image, probs, labels_names):
     fig = make_subplots(rows=1, cols=2)
     fig.add_trace(go.Image(z=img_resize), row=1, col=1)
     fig.add_trace(go.Bar(x=labels_names, y=probs), row=1, col=2)
-    fig.update_layout(height=500, width=800, title_text="Model predictions", showlegend=False)
+    fig.update_layout(height=500, width=800, title_text="Apple leaf disease detection", showlegend=False)
+    fig.update_yaxes(title_text="Probability", range=[0, 1], row=1, col=2)
+    fig.update_xaxes(title_text="Disease", row=1, col=2)
+    fig.update_xaxes(title_text="Image", row=1, col=1)
     return fig
 
 
 def predict(model, image, transform, device):
-    transformed = transform(image=image)
-    image_tensor = transformed['image']
+    image_pil = Image.fromarray(image)
+    transformed = transform(image_pil)
+    image_tensor = transformed
+
     image_tensor = image_tensor.to(device)
     with torch.no_grad():
         logits = model(image_tensor.unsqueeze(0))

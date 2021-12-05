@@ -23,9 +23,9 @@ model.eval()
 
 app.layout = html.Div([
     html.H1("Ribes Technologies"),
-    html.H3("Apple Leaf Disease Detection"),
+    html.H3("Apple Leaf Disease Detection Algorithm"),
     html.Div([
-        "Apple Leaf Image Link: ",
+        "Image Link: ",
         dcc.Input(id='input-link', value=LINK_PLACEHOLDER, type='text'),
         html.Button(id='submit-button', n_clicks=0, children='Submit'),
     ]),
@@ -48,12 +48,10 @@ def update_output_div(input_link, n_clicks):
     else:
         image = read_image_from_url(input_link)
         probs = predict(model, image, transforms_valid, device)
-        # probs = [0.25, 0.25, 0.25, 0.25]
         labels_names = [idx2cname[idx] for idx in range(len(idx2cname))]
-        # labels_names = ["healthy", "mult. diseases", "rust", "scab"]
         fig = visualize_prediction(image, probs, labels_names)
 
-    return [f'Pasted link: {input_link}', f"Predictions counter: {n_clicks}", fig]
+    return [f'Pasted link: {input_link}', f"Counter: {n_clicks}", fig]
 
 
 if __name__ == "__main__":
