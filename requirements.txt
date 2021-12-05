@@ -15,3 +15,5 @@ tqdm
 torchsummary
 torchvision
 ipywidgets
+dash
+jupyter-dash

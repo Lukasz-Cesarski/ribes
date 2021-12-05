@@ -1,6 +1,5 @@
 import os
 import numpy as np
-import pandas as pd
 
 import albumentations as A
 import cv2
@@ -9,18 +8,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torchvision
-import torch.optim as optim
 
 from tqdm.notebook import tqdm
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 from albumentations.pytorch import ToTensorV2
 
 from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import KFold, StratifiedKFold
-
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 
 
 class PlantDataset(Dataset):
@@ -34,7 +27,8 @@ class PlantDataset(Dataset):
         return self.df.shape[0]
 
     def __getitem__(self, idx):
-        image_src = self.dir_input + '/images/' + self.df.loc[idx, 'image_id'] + '.jpg'
+        image_src = os.path.join(self.dir_input, 'images', self.df.loc[idx, 'image_id'] + '.jpg')
+        assert os.path.isfile(image_src), image_src
         # print(image_src)
         image = cv2.imread(image_src, cv2.IMREAD_COLOR)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -198,3 +192,5 @@ transforms_valid = A.Compose([
     A.Normalize(p=1.0),
     ToTensorV2(p=1.0),
 ])
+
+idx2cname = {0: 'healthy', 1: 'multiple_diseases', 2: 'rust', 3: 'scab'}
