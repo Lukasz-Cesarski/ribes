@@ -1,7 +1,8 @@
 import os
-import cv2
 import tempfile
 
+import cv2
+import torch
 import requests
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
@@ -33,3 +34,13 @@ def visualize_prediction(image, probs, labels_names):
     fig.add_trace(go.Bar(x=labels_names, y=probs), row=1, col=2)
     fig.update_layout(height=500, width=800, title_text="Model predictions", showlegend=False)
     return fig
+
+
+def predict(model, image, transform, device):
+    transformed = transform(image=image)
+    image_tensor = transformed['image']
+    image_tensor = image_tensor.to(device)
+    with torch.no_grad():
+        logits = model(image_tensor.unsqueeze(0))
+    probs = torch.softmax(logits, 1).numpy()[0]
+    return probs

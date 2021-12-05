@@ -1,15 +1,25 @@
+import os
+
 import dash
+import torch
+import plotly.graph_objects as go
 from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
-import plotly.graph_objects as go
 
-from app.utils import read_image_from_url, visualize_prediction
-
+from app.utils import read_image_from_url, visualize_prediction, predict
+from ribes.nnpp.nn import transforms_valid, idx2cname
 
 LINK_PLACEHOLDER = "Paste link here"
 app = dash.Dash(__name__)
 server = app.server
+
+device = torch.device("cpu")
+model_path = "app/plant-disease-model-complete.pth"
+assert os.path.isfile(model_path), model_path
+model = torch.load(model_path, map_location=device)
+model.eval()
+
 
 app.layout = html.Div([
     html.H1("Ribes Technologies"),
@@ -37,8 +47,10 @@ def update_output_div(input_link, n_clicks):
         fig = go.Figure()
     else:
         image = read_image_from_url(input_link)
-        probs = [0.25, 0.25, 0.25, 0.25]
-        labels_names = ["healthy", "mult. diseases", "rust", "scab"]
+        probs = predict(model, image, transforms_valid, device)
+        # probs = [0.25, 0.25, 0.25, 0.25]
+        labels_names = [idx2cname[idx] for idx in range(len(idx2cname))]
+        # labels_names = ["healthy", "mult. diseases", "rust", "scab"]
         fig = visualize_prediction(image, probs, labels_names)
 
     return [f'Pasted link: {input_link}', f"Predictions counter: {n_clicks}", fig]

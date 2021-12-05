@@ -1,5 +1,11 @@
+-f https://download.pytorch.org/whl/cpu/torch_stable.html
+albumentations
 dash
 gunicorn
 opencv-python-headless
 requests
 plotly
+torch==1.10.0+cpu
+torchvision==0.11.1+cpu
+scikit-learn
+numpy
