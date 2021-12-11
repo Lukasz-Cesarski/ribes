@@ -26,27 +26,71 @@ assert os.path.isfile(model_path), model_path
 model = torch.load(model_path, map_location=device)
 model.eval()
 
-
 app.layout = html.Div([
-    html.H1("Ribes Technologies"),
-    dcc.Link('https://www.ribestech.com/', href='https://www.ribestech.com/', refresh=True),
-    html.P("Email: contact@ribestech.com"),
-    html.H3("Apple Leaf Disease Detection Algorithm"),
+    html.Link(
+        rel='stylesheet',
+        href='/assets/main.css'
+    ),
+    html.Link(
+        rel='stylesheet',
+        href='/assets/boostrap.css'
+    ),
+    html.Link(
+        rel='stylesheet',
+        href='/assets/font-awesome.css'
+    ),
+    html.Header(html.A(html.Strong("Ribes Technologies"), className="logo"), id="header", className="mb-5"),
+    html.Div(className="mt-5"),
+    html.Section(
+      html.Section(
+        html.Article(
+          [
+            html.Span(
+              html.Img(src="/assets/images/pic14.jpg"), className="image", style="display: none"
+            ),
+            html.Header(
+              html.H3("Ribes Technologies - Apple Leaf Disease Detection Algorithm")
+            )
+          ], style={ "background-image": "url('/assets/images/pic14.jpg')" }, className="w-100",
+        ), className="tiles"
+      ), className="spotlights"
+    ),
+    html.Div(className="mt-5"),
     html.Div([
-        "Image Link: ",
-        dcc.Input(id='input-link', value=EXAMPLE_LINK, type='text', size="70"),
-        html.Button(id='submit-button', n_clicks=0, children='Submit'),
+      html.H2("Paste link to photo of a leaf: ", className="mb-2"),
+      dcc.Input(id='input-link', value=EXAMPLE_LINK, type='text', size="70"),
+      html.Div(
+        html.Div(
+          html.Button(id='submit-button', n_clicks=0, children='Submit'), className="col d-flex justify-content-center"
+        ), className="row justify-content-md-center mt-3"
+      )
     ]),
     html.Br(),
     dcc.Graph(id='prediction'),
     html.Div(id='output-link'),
-    dcc.Link('search HEALTHY images', href=SEARCH_RUST, refresh=True),
-    html.Br(),
-    dcc.Link('search RUST images', href=SEARCH_RUST, refresh=True),
-    html.Br(),
-    dcc.Link('search SCAB images', href=SEARCH_SCAB, refresh=True),
+    html.Div(className="mt-5"),
+    html.Div(
+      [
+        html.Div(dcc.Link('search HEALTHY images', href=SEARCH_RUST, refresh=True, className="button"), className="col d-flex justify-content-center"),
+        html.Div(dcc.Link('search RUST images', href=SEARCH_RUST, refresh=True, className="button"), className="col d-flex justify-content-center"),
+        html.Div(dcc.Link('search SCAB images', href=SEARCH_SCAB, refresh=True, className="button"), className="col d-flex justify-content-center")
+      ], className="row d-flex justify-content-around"
+    ),
     html.Div(id='n-clicks'),
-])
+    html.Div(className="mt-5"),
+    html.Div(className="mt-5"),
+    html.Section(
+      html.Div(
+          [
+              html.H2("Contact us"),
+              html.H3("Email"),
+              html.A("ribestech.com"),
+              html.Br(),
+              html.A("contact@ribestech.com"),
+          ], className="contact-method"
+      ), id="contact"
+    )
+], className="container")
 
 @app.callback(
     Output(component_id='output-link', component_property='children'),
