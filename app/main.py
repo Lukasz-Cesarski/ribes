@@ -73,7 +73,7 @@ app.layout = html.Div([
     html.Div(className="mt-5"),
     html.Div(
       [
-        html.Div(dcc.Link('search HEALTHY images', href=SEARCH_RUST, refresh=True, className="button"), className="col d-flex justify-content-center"),
+        html.Div(dcc.Link('search HEALTHY images', href=SEARCH_HEALTHY, refresh=True, className="button"), className="col d-flex justify-content-center"),
         html.Div(dcc.Link('search RUST images', href=SEARCH_RUST, refresh=True, className="button"), className="col d-flex justify-content-center"),
         html.Div(dcc.Link('search SCAB images', href=SEARCH_SCAB, refresh=True, className="button"), className="col d-flex justify-content-center")
       ], className="row d-flex justify-content-around"
@@ -109,10 +109,10 @@ def update_output_div(input_link, n_clicks):
         fig = visualize_prediction(image, probs, labels_names)
     except error:
         fig = go.Figure()
-        fig.update_layout(title_text="Image downloading failed. Make sure you pasted link to the image source")
+        fig.update_layout(title_text="Image downloading failed. Does your link end with '.jpg', '.jpeg' '.png'?")
     except:
         fig = go.Figure()
-        fig.update_layout(title_text=f"Can not connect to page source page.")
+        fig.update_layout(title_text=f"Can not connect to page source page. Is this a valid URL (starts with 'http')?")
 
     return [f'Input link: {input_link}', f"Request Counter: {n_clicks}", fig]
 
