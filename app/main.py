@@ -46,7 +46,9 @@ app.layout = html.Div([
         html.Article(
           [
             html.Span(
-              html.Img(src="/assets/images/pic14.jpg"), className="image", style="display: none"
+              html.Img(src="/assets/images/pic14.jpg"),
+                className="image",
+                # style="display: none"
             ),
             html.Header(
               html.H3("Ribes Technologies - Apple Leaf Disease Detection Algorithm")
